@@ -13,27 +13,49 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth=True
 set_session(tf.Session(config=config))
 
-def sfa_vizdoom_default_cnn(dim1=30, dim2=45, available_actions_count=3):
+def vizdoom_default_cnn(dim1=30, dim2=45, available_actions_count=3):
     #tf.reset_default_graph() 
     #config = tf.ConfigProto()
     #config.gpu_options.allow_growth=True
     #set_session(tf.Session(config=config))
     net = Sequential()
     
-    net.add(Conv2D(8, (6, 6), strides=3, input_shape=(dim1, dim2, 1), padding="same", activation="relu", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
-    #net.add(Dropout(0.5))
+    net.add(Conv2D(8, (6, 6), strides=3, input_shape=(dim1, dim2, 1), padding="same", activation="relu", name="conv1", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
     
-    net.add(Conv2D(8, (3, 3), strides=2, padding="same", activation="relu", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
-    #net.add(Dropout(0.5))
+    net.add(Conv2D(8, (3, 3), strides=2, padding="same", activation="relu", name="conv2", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
     
     net.add(Flatten())
     
-    net.add(Dense(128, activation="relu", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))    
-    #net.add(Dropout(0.5))
+    net.add(Dense(128, activation="relu", name="fc1", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))    
     
     net.add(Dense(available_actions_count, kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))   
-    optimizah = keras.optimizers.RMSprop(lr=0.00025, rho=0.0, epsilon=1e-10, decay=0.9)
+    #optimizah = keras.optimizers.RMSprop(lr=0.00025, rho=0.0, epsilon=1e-10, decay=0.9)
+    net.compile(loss='mean_squared_error', optimizer='adam')
+
+
+    return net
+
+def vizdoom_big_cnn(dim1=30, dim2=45, available_actions_count=3):
+    #tf.reset_default_graph() 
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth=True
+    set_session(tf.Session(config=config))
+    net = Sequential()
+
+    net.add(Conv2D(24, (8, 8), strides=4, input_shape=(dim1, dim2, 1), padding="same", activation="relu", name="conv1", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
+
+    net.add(Conv2D(48, (4, 4), strides=2, padding="same", activation="relu", name="conv2", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
+ 
+#    net.add(Conv2D(48, (3, 3), strides=1, padding="same", activation="relu", name="conv3", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
+
+
+    net.add(Flatten())
+
+    net.add(Dense(384, activation="relu", name="fc1", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
+
+    net.add(Dense(available_actions_count, kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
+    optimizah = keras.optimizers.Adam(decay=1e-4)
     net.compile(loss='mean_squared_error', optimizer=optimizah)
 
-
+    print(net.summary())
     return net
