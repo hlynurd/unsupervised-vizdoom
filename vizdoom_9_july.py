@@ -5,6 +5,7 @@
 
 #!/usr/bin/env python
 
+
 from __future__ import division
 from __future__ import print_function
 import keras as keras
@@ -27,6 +28,10 @@ discount_factor = 0.95
 epochs = 20
 learning_steps_per_epoch = 2000
 replay_memory_size = 10000
+# Note: Health gathering settings
+#screen_resolution = RES_84x84
+#screen_format = GRAY8
+
 
 # NN learning settings
 batch_size = 64
