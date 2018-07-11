@@ -35,7 +35,7 @@ def vizdoom_default_cnn(dim1=30, dim2=45, available_actions_count=3):
 
     return net
 
-def vizdoom_big_cnn(dim1=30, dim2=45, available_actions_count=3):
+def vizdoom_big_cnn(dim1=30, dim2=45, available_actions_count=3, lr=0.001, beta_1=0.9, beta_2=0.999):
     #tf.reset_default_graph() 
     config = tf.ConfigProto()
     config.gpu_options.allow_growth=True
@@ -54,7 +54,7 @@ def vizdoom_big_cnn(dim1=30, dim2=45, available_actions_count=3):
     net.add(Dense(384, activation="relu", name="fc1", kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
 
     net.add(Dense(available_actions_count, kernel_initializer=glorot_normal(), bias_initializer=keras.initializers.Constant(value=0.1)))
-    optimizah = keras.optimizers.Adam(decay=1e-4)
+    optimizah = keras.optimizers.Adam(lr=lr, beta_1=beta_1, beta_2 = beta_2, decay=1e-4)
     net.compile(loss='mean_squared_error', optimizer=optimizah)
 
     print(net.summary())
