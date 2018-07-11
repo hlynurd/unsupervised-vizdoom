@@ -223,7 +223,7 @@ if __name__ == '__main__':
     memory = ReplayMemory(capacity=replay_memory_size)
 
     session = tf.Session()
-    keras_controller = vizdoom_big_cnn(resolution[0], resolution[1], len(actions))
+    keras_controller = vizdoom_big_cnn(resolution[0], resolution[1], len(actions), lr=learning_rate, beta_1=0.95, beta_2=0.999)
     
     saver = tf.train.Saver()
     if load_model:
