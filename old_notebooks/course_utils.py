@@ -1,15 +1,20 @@
+
+
 import numpy as np
-import cv2, os
+import os
 
 from sklearn import metrics
 from PIL import Image
 from skimage import color
 from sklearn import datasets
-def load_ini_data2():
+def load_ini_data2(duckdns=False):
     X = []
     Y = []
-    new_dim = [32, 32]
-    root_dir = "ini_data/"
+    new_dim = [28, 28]
+    if not duckdns:
+        root_dir = "ini_data/"
+    else:
+        root_dir = "../lotsofspace/ini_data/"
     for class_dir in os.listdir(root_dir):    
         for image_filename in os.listdir(root_dir+class_dir):    
             if image_filename.endswith(".ppm"): 
@@ -19,19 +24,23 @@ def load_ini_data2():
                 if img.shape[0] > 35 or img.shape[1]>35:
                     continue
                 # Ensure that all images have the same dimension
-                img = cv2.resize(img, (new_dim[0], new_dim[1])) 
+                img = Image.fromarray(img)
+                img = img.resize((new_dim[0], new_dim[1]), Image.ANTIALIAS)
+                img = np.array(img)
                 X.append(img)
                 Y.append(int(class_dir))
     X = np.array(X)
     X = np.resize(X, (X.shape[0], X.shape[1] * X.shape[2]))
     return X, np.array(Y)
 
-def load_ini_data():
+def load_ini_data(duckdns=False):
     X = []
     Y = []
     new_dim = [32, 32]
-    classes = [3, 11, 35]
-    root_dir = "ini_data/"
+    if not duckdns:
+        root_dir = "ini_data/"
+    else:
+        root_dir = "../lotsofspace/ini_data/"
     for class_dir in os.listdir(root_dir):
         for npy_file in os.listdir(root_dir+class_dir):
             X.append(np.load(root_dir + class_dir + "/" + npy_file))
